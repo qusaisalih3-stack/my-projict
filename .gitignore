@@ -1,0 +1,35 @@
+# Git ignore rules for AI Video Editor
+
+# Python / FastAPI
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+.env
+
+# Media & Uploads
+uploads/
+outputs/
+temp/
+*.mp4
+*.mp3
+*.wav
+*.mov
+
+# Flutter / Dart
+frontend/.dart_tool/
+frontend/.fvm/
+frontend/.idea/
+frontend/.packages
+frontend/build/
+frontend/.pub/
+frontend/.pub-cache/
+frontend/ios/Pods/
+frontend/macos/Pods/
+
+# IDE / OS
+.DS_Store
+*.swp
+.idea/
+.vscode/
