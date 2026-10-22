@@ -17,23 +17,23 @@ class AiVideoEditorApp extends StatefulWidget {
 }
 
 class _AiVideoEditorAppState extends State<AiVideoEditorApp> {
-  Locale _locale = const Locale('en');
+  Locale _locale = const Locale('ar');
 
   void _toggleLanguage() {
     setState(() {
-      _locale = _locale.languageCode == 'en' ? const Locale('ar') : const Locale('en');
+      _locale = _locale.languageCode == 'ar' ? const Locale('en') : const Locale('ar');
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AI Video Editor',
+      title: '.edit',
       debugShowCheckedModeBanner: false,
       locale: _locale,
       supportedLocales: const [
-        Locale('en'),
         Locale('ar'),
+        Locale('en'),
       ],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -42,9 +42,9 @@ class _AiVideoEditorAppState extends State<AiVideoEditorApp> {
       ],
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: const Color(0xFF0F0F12),
-        primaryColor: const Color(0xFF6C5CE7),
+        primaryColor: const Color(0xFFFFD700),
         colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF6C5CE7),
+          primary: Color(0xFFFFD700),
           secondary: Color(0xFF00CEC9),
           surface: Color(0xFF1E1E24),
         ),
@@ -108,20 +108,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<ChatMessage> _messages = [];
 
+  final List<String> _samplePromptsAr = [
+    "اجعل فيديو السيارة سينمائياً وقوياً",
+    "زامِن التقطيعات مع إيقاع الموسيقى",
+    "اجعل الإضاءة مشرقة وفخمة",
+  ];
+
   final List<String> _samplePromptsEn = [
     "Make my car video look cinematic and aggressive.",
     "Synchronize cuts with the music beat.",
     "Make my house look luxurious and bright.",
-    "Slow opening and energetic ending.",
-    "Mysterious, dramatic atmosphere with dark grading."
-  ];
-
-  final List<String> _samplePromptsAr = [
-    "اجعل فيديو السيارة سينمائياً وقوياً.",
-    "نسّق التقطيعات مع إيقاع الموسيقى.",
-    "اجعل المنزل يبدو فاخراً ومشرقاً.",
-    "بداية بطيئة ونهاية حماسية سريعة.",
-    "طابع غامض ودرامي مع ألوان داكنة."
   ];
 
   @override
@@ -134,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final isAr = widget.currentLocale.languageCode == 'ar';
     _messages.add(ChatMessage(
       text: isAr
-          ? "مرحباً! أنا مساعِدك لإخراج الفيديو. ارفع فيديو واكتب أسلوب المونتاج الذي تريده."
+          ? "أهلاً بك! أنا مساعدك الذكي لمونتاج الفيديو. ارفع مقاطعك واضف الموسيقى واخبرني بالتعديل المطلوب."
           : "Welcome! I'm your AI video editing assistant. Upload footage, add music, and tell me what edit you want.",
       isUser: false,
     ));
@@ -243,7 +239,6 @@ class _HomeScreenState extends State<HomeScreen> {
         request.fields['project_id'] = projectId!;
       }
 
-      // Support both path (native) and bytes (web/memory) file picking
       if (_videoFile?.path != null) {
         request.files.add(await http.MultipartFile.fromPath('video', _videoFile!.path!));
       } else if (_videoFile?.bytes != null) {
@@ -379,19 +374,26 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
+                color: const Color(0xFFFFD700).withOpacity(0.15),
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFFFD700), width: 1),
               ),
-              child: const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+              child: const Icon(Icons.auto_awesome, color: Color(0xFFFFD700), size: 20),
             ),
             const SizedBox(width: 10),
-            Text(
-              isAr ? 'محرر الفيديو الذكي' : 'AI Video Editor',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            const Text(
+              '.edit',
+              style: TextStyle(
+                color: Color(0xFFFFD700),
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                letterSpacing: 1.2,
+              ),
             ),
           ],
         ),
@@ -447,7 +449,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1E1E24),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.3), width: 1),
       ),
       child: _previewVideoUrl != null && _videoPlayerController != null && _videoPlayerController!.value.isInitialized
           ? ClipRRect(
@@ -484,7 +486,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     right: 10,
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00CEC9),
+                        backgroundColor: const Color(0xFFFFD700),
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -504,22 +506,80 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.movie_filter_outlined,
-                  size: 48,
-                  color: Colors.white.withOpacity(0.4),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _videoFile == null
-                      ? (isAr ? 'اختر فيديو للبدء' : 'Select video media to start')
-                      : (isAr ? 'جاهز للتعديل بالذكاء الاصطناعي' : 'Ready for AI edit processing'),
-                  style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 14),
-                ),
-              ],
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Styled Background Image depicting luxury car in front of a majestic palace
+                  Image.network(
+                    'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=1000',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xFF2A281E), Color(0xFF141418)],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Dark luxury gradient overlay
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.3),
+                          Colors.black.withOpacity(0.75),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Overlay Content: Icon & Text
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.5),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0xFFFFD700), width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFFFD700).withOpacity(0.3),
+                              blurRadius: 12,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.cloud_upload_outlined,
+                          size: 38,
+                          color: Color(0xFFFFD700),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        _videoFile == null
+                            ? (isAr ? 'اختر ملف فيديو لبدء المونتاج' : 'Select a video file to start editing')
+                            : (isAr ? 'جاهز للتعديل بالذكاء الاصطناعي' : 'Ready for AI edit processing'),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(blurRadius: 6, color: Colors.black, offset: Offset(0, 2)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
     );
   }
@@ -531,31 +591,32 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6C5CE7),
+              backgroundColor: const Color(0xFFFFD700),
+              foregroundColor: Colors.black,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: _pickVideo,
-            icon: const Icon(Icons.add_a_photo, size: 18, color: Colors.white),
+            icon: const Icon(Icons.add_a_photo, size: 18, color: Colors.black),
             label: Text(
-              _videoFile == null ? (isAr ? '+ فيديو' : '+ Select Video') : _videoFile!.name,
+              _videoFile == null ? (isAr ? '+ اختر فيديو' : '+ Select Video') : _videoFile!.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 8),
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Color(0xFF00CEC9)),
+              side: const BorderSide(color: Color(0xFFFFD700)),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: _pickAudio,
-            icon: const Icon(Icons.audiotrack, size: 18, color: Color(0xFF00CEC9)),
+            icon: const Icon(Icons.audiotrack, size: 18, color: Color(0xFFFFD700)),
             label: Text(
-              _audioFile == null ? (isAr ? '+ موسيقى' : '+ Add Audio') : _audioFile!.name,
+              _audioFile == null ? (isAr ? '+ إضافة صوت' : '+ Add Audio') : _audioFile!.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Color(0xFF00CEC9)),
+              style: const TextStyle(color: Color(0xFFFFD700), fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -579,7 +640,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 width: 16,
                 height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF00CEC9)),
+                child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFFFD700)),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -590,7 +651,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Text(
                 '${(_processingProgress * 100).toInt()}%',
-                style: const TextStyle(color: Color(0xFF00CEC9), fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Color(0xFFFFD700), fontWeight: FontWeight.bold),
               )
             ],
           ),
@@ -598,7 +659,7 @@ class _HomeScreenState extends State<HomeScreen> {
           LinearProgressIndicator(
             value: _processingProgress,
             backgroundColor: Colors.white10,
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF00CEC9)),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFFD700)),
           ),
         ],
       ),
@@ -613,7 +674,8 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
         decoration: BoxDecoration(
-          color: msg.isUser ? const Color(0xFF6C5CE7) : const Color(0xFF1E1E24),
+          color: msg.isUser ? const Color(0xFF3A341C) : const Color(0xFF1E1E24),
+          border: msg.isUser ? Border.all(color: const Color(0xFFFFD700).withOpacity(0.5)) : null,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
@@ -644,7 +706,7 @@ class _HomeScreenState extends State<HomeScreen> {
             margin: const EdgeInsets.only(right: 8),
             child: ActionChip(
               backgroundColor: const Color(0xFF1E1E24),
-              side: BorderSide(color: Colors.white.withOpacity(0.1)),
+              side: BorderSide(color: const Color(0xFFFFD700).withOpacity(0.3)),
               label: Text(
                 prompt,
                 style: const TextStyle(fontSize: 12, color: Colors.white70),
@@ -670,7 +732,7 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: _promptController,
               style: const TextStyle(color: Colors.white, fontSize: 14),
               decoration: InputDecoration(
-                hintText: isAr ? 'اوصف التعديل المطلوب...' : 'Describe the edit you want...',
+                hintText: isAr ? 'صف التعديل الذي تريده...' : 'Describe the edit you want...',
                 hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
                 filled: true,
                 fillColor: const Color(0xFF1E1E24),
@@ -686,9 +748,9 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(width: 8),
           IconButton.filled(
             style: IconButton.styleFrom(
-              backgroundColor: const Color(0xFF6C5CE7),
+              backgroundColor: const Color(0xFFFFD700),
             ),
-            icon: const Icon(Icons.send_rounded, color: Colors.white),
+            icon: const Icon(Icons.send_rounded, color: Colors.black),
             onPressed: () {
               _submitPrompt(_promptController.text);
             },
